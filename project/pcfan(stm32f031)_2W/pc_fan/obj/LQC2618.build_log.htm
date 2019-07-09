@@ -22,46 +22,23 @@ Dialog DLL:      TARMCM1.DLL V1.14.0.0
  
 <h2>Project:</h2>
 D:\YE1795D\1795_2W\project\pcfan(stm32f031)_2W\fan.uvprojx
-Project File Date:  07/08/2019
+Project File Date:  07/09/2019
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'D:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'fan'
-compiling power.c...
-compiling dds.c...
 compiling main.c...
 ..\..\main\main.c(273): warning:  #550-D: variable "dv"  was set but never used
   	int32_t dv=0;
 ..\..\main\main.c(514): warning:  #177-D: variable "error"  was declared but never referenced
   	uint8_t error=0;
-..\..\main\main.c(697): warning:  #177-D: variable "ttt"  was declared but never referenced
+..\..\main\main.c(740): warning:  #177-D: variable "ttt"  was declared but never referenced
   	uint16 idata ttt;
 ..\..\main\main.c: 3 warnings, 0 errors
-compiling tab_sqrt_trig.c...
-compiling ds18B20.c...
-..\..\main\ds18B20.c(859): warning:  #177-D: variable "toggle_flag"  was declared but never referenced
-  static uint8_t toggle_flag=0;
-..\..\main\ds18B20.c: 1 warning, 0 errors
-compiling stm32f0xx_emu.c...
-..\..\dspcpu\stm32f0xx\stm32f0xx_emu.c(261): warning:  #177-D: variable "i"  was declared but never referenced
-  	static uint32_t i=0;
-..\..\dspcpu\stm32f0xx\stm32f0xx_emu.c(263): warning:  #177-D: variable "putt"  was declared but never referenced
-  	uint32_t putt,nutt;
-..\..\dspcpu\stm32f0xx\stm32f0xx_emu.c(263): warning:  #177-D: variable "nutt"  was declared but never referenced
-  	uint32_t putt,nutt;
-..\..\dspcpu\stm32f0xx\stm32f0xx_emu.c: 3 warnings, 0 errors
-compiling stm32f0xx_it.c...
-compiling stm32f030.c...
-compiling STM32F051_Flash.c...
-compiling ModBus.c...
-compiling conf.c...
-conf.c(29): warning:  #177-D: variable "GPIO_InitStructure"  was declared but never referenced
-  	GPIO_InitTypeDef GPIO_InitStructure;
-conf.c: 1 warning, 0 errors
 linking...
-Program Size: Code=10944 RO-data=748 RW-data=632 ZI-data=1832  
+Program Size: Code=14748 RO-data=812 RW-data=800 ZI-data=1832  
 FromELF: creating hex file...
-".\pc_fan\obj\LQC2618.axf" - 0 Error(s), 8 Warning(s).
+".\pc_fan\obj\LQC2618.axf" - 0 Error(s), 3 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -91,7 +68,7 @@ Package Vendor: Keil
       Include file:  Drivers\CMSIS\Device\ST\STM32F0xx\Include\stm32f0xx.h
       Source file:   Drivers\CMSIS\Device\ST\STM32F0xx\Source\Templates\arm\startup_stm32f031x6.s
       Source file:   Drivers\CMSIS\Device\ST\STM32F0xx\Source\Templates\system_stm32f0xx.c
-Build Time Elapsed:  00:00:04
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>

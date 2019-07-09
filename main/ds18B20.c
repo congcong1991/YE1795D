@@ -827,6 +827,7 @@ void DS18B20_LOOP(void){
 	else
 	{
 		DS18B20error();
+		parameter.curr_freq=0;
 	}
 	DS18B20_INDEX=0;
 }

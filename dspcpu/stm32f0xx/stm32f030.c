@@ -105,26 +105,26 @@ void setParity(uint8 parity)
 }
 void Enable485TXD(void) {
 	/* PA14 -> TXD */
-	GPIO_InitTypeDef  GPIO_InitStructure;
- 	
-	GPIO_InitStructure.GPIO_Pin =GPIO_Pin_14;                 
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF; 
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);   
-	/*-----------------打开复用功能------------------*/				
-	GPIO_PinAFConfig(GPIOA,GPIO_PinSource14,GPIO_AF_1);    
+//	GPIO_InitTypeDef  GPIO_InitStructure;
+// 	
+//	GPIO_InitStructure.GPIO_Pin =GPIO_Pin_14;                 
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF; 
+//	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+//	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);   
+//	/*-----------------打开复用功能------------------*/				
+//	GPIO_PinAFConfig(GPIOA,GPIO_PinSource14,GPIO_AF_1);    
 }
 void Disable485TXD(void) 
 {
 		/* PA14 -> TXD */
-	GPIO_InitTypeDef  GPIO_InitStructure;
- 	
-	GPIO_InitStructure.GPIO_Pin =GPIO_Pin_14;                 
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN; 
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);   
+//	GPIO_InitTypeDef  GPIO_InitStructure;
+// 	
+//	GPIO_InitStructure.GPIO_Pin =GPIO_Pin_14;                 
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN; 
+//	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+//	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);   
 	/*-----------------关闭复用功能------------------*/				
 //	GPIO_PinAFConfig(GPIOA,GPIO_PinSource14,GPIO_AF_0);   
 	

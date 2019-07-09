@@ -578,19 +578,20 @@ void start_dds(void);
 extern uint8_t  is_dds_start(void);
 extern int32_t getTemp(void);
 
-
+uint32_t last_record_freq=0;
+uint32_t emu_period;
 void updat_freq_by_temp(void)
 {
 		if(parameter.ext_temp>=config.temp_stop)
 		{
 			setHaltMode();
-			parameter.curr_freq=config.freq;
+			parameter.curr_freq=0;
 			return;
 		}
 		if(parameter.ext_temp<=0)
 		{
 			setHaltMode();
-			parameter.curr_freq=config.freq;
+			parameter.curr_freq=0;
 		}
 		else if(parameter.ext_temp>0&parameter.ext_temp<=300)
 		{
@@ -657,40 +658,82 @@ void updat_freq_by_temp(void)
 			 clrHaltMode();
 			parameter.curr_freq=config.freq;
 		}
-		
+		emu_period=(float)100000/parameter.curr_freq*100;
 	
 }
-uint32_t last_record_freq;
 
-void updata_pwm(void)
+void TIM3_IRQHandler(void)
 {
-	uint32_t emu_period;
+ if(TIM_GetITStatus(TIM3,TIM_IT_Update) != RESET) //溢出中断
+	{
+				
+	}
+	TIM_ClearITPendingBit(TIM3,TIM_IT_Update);  //清除中断标志位
 	if(isHaltMode())
 	{
-//		TIM_CtrlPWMOutputs(TIM2, DISABLE); 
-//		TIM_CtrlPWMOutputs(TIM3, DISABLE); 
-		TIM2->CCR2=TIM2->ARR;
-		TIM3->CCR1=0;
+		TIM3->ARR=0;
 		return;
-	}else if(!isDS18B20fine())
-	{
-		TIM2->CCR2=TIM2->ARR;
-		TIM3->CCR1=0;
-		return;	
-	}else 
-	{
-		if(last_record_freq!=parameter.curr_freq)
-		{
-			emu_period=240000/parameter.curr_freq;
-			TIM2->ARR=emu_period-1;
-			TIM3->ARR=emu_period-1;
-			TIM2->CCR2=(emu_period>>1)-1;
-			TIM3->CCR1=(emu_period>>1)-1;
-		}
-		last_record_freq=parameter.curr_freq;
 	}
+	if(!isDS18B20fine())
+	{
+		TIM3->ARR=0;
+		return;
+	}
+	TIM3->ARR=emu_period-1;
+	TIM3->CCR1=emu_period>>1;
 	
 }
+void TIM2_IRQHandler(void)
+{
+ if(TIM_GetITStatus(TIM2,TIM_IT_Update) != RESET) //溢出中断
+	{
+				
+	}
+	TIM_ClearITPendingBit(TIM2,TIM_IT_Update);  //清除中断标志位
+	if(isHaltMode())
+	{
+		TIM2->ARR=TIM2->ARR+1; 
+		return;
+	}
+	if(!isDS18B20fine())
+	{
+		TIM2->CCR2=TIM2->ARR+1;
+		return;
+	}
+	TIM2->ARR=emu_period-1;
+	TIM2->CCR2=emu_period>>1;
+	
+}
+//void updata_pwm(void)
+//{
+//	
+//	if(isHaltMode())
+//	{
+////		TIM_CtrlPWMOutputs(TIM2, DISABLE); 
+////		TIM_CtrlPWMOutputs(TIM3, DISABLE); 
+//		TIM2->CCR2=TIM2->ARR+1;
+//		TIM3->CCR1=0;
+//		return;
+//	}else if(!isDS18B20fine())
+//	{
+//		TIM2->CCR2=TIM2->ARR+1;
+//		TIM3->CCR1=0;
+//		return;	
+//	}else 
+//	{
+//		if(last_record_freq!=parameter.curr_freq)
+//		{
+//			emu_period=(float)100000/parameter.curr_freq*100;
+//			TIM2->ARR=emu_period-1;
+//			TIM3->ARR=emu_period-1;
+//			TIM2->CCR2=(emu_period>>1)-1;
+//			TIM3->CCR1=(emu_period>>1)-1;
+//			last_record_freq=parameter.curr_freq;
+//		}
+//		
+//	}
+//	
+//}
 
 int main(void){
 	uint32_t  loops=0;      
@@ -707,7 +750,7 @@ int main(void){
 	clrHaltMode();
 	initEEPROM();
 	parameter.curr_freq=config.freq;
-	last_record_freq=parameter.curr_freq;  //上次记录的频率
+//	last_record_freq=parameter.curr_freq;  //上次记录的频率
 	parameter.locked=0;  // 初始化未锁定特征频率
 	
 
@@ -736,7 +779,6 @@ int main(void){
 		updat_freq_by_temp();
 		}
 		if((loops%2000)==0){	// about 500ms  通过控制输出电压　稳定输出功率
-		updata_pwm();	
 		parameter.currInterTemp=getTemp(); 
 		}
 		if(loops>5000)

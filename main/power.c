@@ -24,7 +24,7 @@ void	power_gpio_init(void)
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 	//AF1
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource1, GPIO_AF_1);
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource1, GPIO_AF_2);
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource6, GPIO_AF_1);
 
 		//***************************************************************************
@@ -35,9 +35,10 @@ void	power_gpio_init(void)
 
 //****TIM3_PWM波1,2通道初始化***************************************** 
 void power_pwm_init(void){
-		uint32_t pwm_total=240000/parameter.curr_freq;
+		uint32_t pwm_total=(float)100000/parameter.curr_freq*100;
 		TIM_OCInitTypeDef	TIM_OCInitStructure;
 		TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure; 
+		NVIC_InitTypeDef                NVIC_InitStructure;
 		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
 		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 //		{  /*  TIM3 中断优先级 */ 
@@ -52,7 +53,7 @@ void power_pwm_init(void){
 	{
 
 		TIM_TimeBaseStructure.TIM_ClockDivision = 0; // 不分频
-	  TIM_TimeBaseStructure.TIM_Prescaler =240-1;    //时钟预分频值(1分频成48MHz)
+	  TIM_TimeBaseStructure.TIM_Prescaler =480-1;    //时钟预分频值(1分频成48MHz)
 		TIM_TimeBaseStructure.TIM_Period =pwm_total-1;       //定时器计数值  (480分频成100K)
 		TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;   //计数模式(中间对齐)
 		TIM_TimeBaseStructure.TIM_RepetitionCounter = 1-1;   // 0 
@@ -76,14 +77,14 @@ void power_pwm_init(void){
 		TIM_OC1Init(TIM3, &TIM_OCInitStructure);//捕获比较匹配器结构2通道赋值 
 		TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable); //使能TIM3在CCR1上的预装载寄存器 
 	
-		TIM_Cmd(TIM3,ENABLE);	//使能或者失能指定的TIM3
-		TIM_CtrlPWMOutputs(TIM3, ENABLE); 
+		
+		
 		
 	}
 	{
 		TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure; 
 		TIM_TimeBaseStructure.TIM_ClockDivision = 0; // 不分频
-	  TIM_TimeBaseStructure.TIM_Prescaler =240-1;    //时钟预分频值(1分频成48MHz)
+	  TIM_TimeBaseStructure.TIM_Prescaler =480-1;    //时钟预分频值(1分频成48MHz)
 		TIM_TimeBaseStructure.TIM_Period =pwm_total-1;       //定时器计数值  (480分频成100K)
 		TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;   //计数模式(中间对齐)
 		TIM_TimeBaseStructure.TIM_RepetitionCounter = 1-1;   // 0 
@@ -101,10 +102,33 @@ void power_pwm_init(void){
 		TIM_OC2Init(TIM2, &TIM_OCInitStructure);//捕获比较匹配器结构2通道赋值 
 		TIM_OC2PreloadConfig(TIM2, TIM_OCPreload_Enable); //使能TIM3在CCR1上的预装载寄存器 
 	
-		TIM_Cmd(TIM2,ENABLE);	//使能或者失能指定的TIM3
-		TIM_CtrlPWMOutputs(TIM2, ENABLE); 
+	
+		
 	}
+		TIM_ClearITPendingBit(TIM3,TIM_IT_Update);
+		TIM_ITConfig(TIM3,TIM_IT_Update,ENABLE); //允许定时器3更新中断
+		TIM_Cmd(TIM3,ENABLE); //使能定时器3        
 
+		
+		NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn; //定时器3中断
+		NVIC_InitStructure.NVIC_IRQChannelPriority = 2; //优先级0
+		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+		NVIC_Init(&NVIC_InitStructure);
+	
+		TIM_ClearITPendingBit(TIM2,TIM_IT_Update);
+		TIM_ITConfig(TIM2,TIM_IT_Update,ENABLE); //允许定时器3更新中断
+		TIM_Cmd(TIM2,ENABLE); //使能定时器3        
+
+		
+		NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn; //定时器3中断
+		NVIC_InitStructure.NVIC_IRQChannelPriority = 2; //优先级0
+		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+		NVIC_Init(&NVIC_InitStructure);
+	
+		TIM_CtrlPWMOutputs(TIM3, ENABLE); 
+		TIM_CtrlPWMOutputs(TIM2, ENABLE); 
+		TIM_Cmd(TIM3,ENABLE);	//使能或者失能指定的TIM3
+		TIM_Cmd(TIM2,ENABLE);	//使能或者失能指定的TIM3
 }
 
 
